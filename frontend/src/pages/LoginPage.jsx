@@ -14,7 +14,7 @@ const LoginPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, form);
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, form);
             localStorage.setItem('token', res.data.token);
             toast.success('Login successful!');
             navigate('/dashboard');
@@ -22,6 +22,7 @@ const LoginPage = () => {
             toast.error(err.response?.data?.message || 'Invalid credentials');
         }
     };
+
 
     return (
         <div className="container d-flex align-items-center justify-content-center min-vh-100 bg-light">
