@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 
 const LoginPage = () => {
     const [form, setForm] = useState({ email: '', password: '' });
+    const [redirect, setRedirect] = useState(false); // ✅ new state
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -17,12 +18,16 @@ const LoginPage = () => {
             const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, form);
             localStorage.setItem('token', res.data.token);
             toast.success('Login successful!');
-            navigate('/dashboard');
+            setRedirect(true); // ✅ redirect flag
         } catch (err) {
             toast.error(err.response?.data?.message || 'Invalid credentials');
         }
     };
 
+    // ✅ redirect to dashboard if login is successful
+    if (redirect) {
+        return <Navigate to="/dashboard" />;
+    }
 
     return (
         <div className="container d-flex align-items-center justify-content-center min-vh-100 bg-light">
@@ -70,7 +75,6 @@ const LoginPage = () => {
                                 Register
                             </span>
                         </small>
-
                     </div>
                 </form>
             </div>
