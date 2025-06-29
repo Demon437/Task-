@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const path = require("path"); // ✅ for serving frontend
+const path = require("path");
 
 dotenv.config();
 
@@ -17,14 +17,15 @@ const taskRoutes = require("./routes/tasks");
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
 
-// ✅ Serve frontend build (React)
-app.use(express.static(path.join(__dirname, "../frontend/build")));
+// Serve frontend only if in production
+if (process.env.NODE_ENV === "production") {
+    app.use(express.static(path.join(__dirname, "../frontend/build")));
 
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend/build/index.html"));
-});
+    app.get("*", (req, res) => {
+        res.sendFile(path.join(__dirname, "../frontend/build/index.html"));
+    });
+}
 
-// Root route (optional)
 app.get("/api", (req, res) => {
     res.send("Welcome to the Task Manager API");
 });
