@@ -17,7 +17,7 @@ const Dashboard = () => {
     const fetchTasks = async () => {
         try {
             setLoading(true);
-            const res = await axios.get('http://localhost:5000/api/tasks', {
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/tasks`, {
                 headers: { Authorization: token }
             });
             setTasks(res.data);
@@ -41,12 +41,12 @@ const Dashboard = () => {
         e.preventDefault();
         try {
             if (editingId) {
-                await axios.patch(`http://localhost:5000/api/tasks/${editingId}`, form, {
+                await axios.patch(`${process.env.REACT_APP_API_URL}/api/tasks/${editingId}`, form, {
                     headers: { Authorization: token }
                 });
                 toast.success('Task updated!');
             } else {
-                await axios.post('http://localhost:5000/api/tasks', form, {
+                await axios.post(`${process.env.REACT_APP_API_URL}/api/tasks`, form, {
                     headers: { Authorization: token }
                 });
                 toast.success('Task added!');
@@ -63,7 +63,7 @@ const Dashboard = () => {
 
     const deleteTask = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/api/tasks/${id}`, {
+            await axios.delete(`${process.env.REACT_APP_API_URL}/api/tasks/${id}`, {
                 headers: { Authorization: token }
             });
             toast.success('Task deleted!');
@@ -75,7 +75,7 @@ const Dashboard = () => {
 
     const updateStatus = async (id, newStatus) => {
         try {
-            await axios.patch(`http://localhost:5000/api/tasks/${id}`, { status: newStatus }, {
+            await axios.patch(`${process.env.REACT_APP_API_URL}/api/tasks/${id}`, { status: newStatus }, {
                 headers: { Authorization: token }
             });
             toast.success('Status updated');
