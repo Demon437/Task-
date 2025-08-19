@@ -25,7 +25,7 @@ export default function SiteHeader() {
             <a href="#politics" className="text-black text-decoration-none">राजनीति</a>
             <a href="#tech" className="text-black text-decoration-none">टेक्नोलॉजी</a>
           </div>
-          <a href="#epaper" className="bg-white text-black px-3 py-2 rounded d-flex align-items-center text-decoration-none">
+          <a href="/epaper" className="bg-white text-black px-3 py-2 rounded d-flex align-items-center text-decoration-none">
             <i className="bi bi-newspaper me-2"></i> ई-पेपर
           </a>
         </div>

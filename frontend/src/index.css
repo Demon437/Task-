@@ -11,3 +11,30 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+/* E-paper UI helpers */
+html, body { overflow-x: hidden; }
+.page-frame {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.main-image {
+  max-height: 78vh;
+  object-fit: contain;
+}
+.thumb {
+  height: 120px;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+.thumb.active { border-color: #0d6efd; }
+.uploader {
+  border: 2px dashed #ced4da;
+  border-radius: 8px;
+  padding: 16px;
+  background: #fff;
+}
