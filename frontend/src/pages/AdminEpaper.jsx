@@ -10,6 +10,8 @@ export default function AdminEpaper() {
     const [isLoading, setIsLoading] = useState(false);
     const [files, setFiles] = useState([]);
     const [modalUrl, setModalUrl] = useState('');
+    const [zoom, setZoom] = useState(1);
+    const [fitWidth, setFitWidth] = useState(true);
     const modalRef = useRef(null);
 
     useEffect(() => {
@@ -62,13 +64,46 @@ export default function AdminEpaper() {
         });
     }
 
+    function zoomIn() {
+        setFitWidth(false);
+        setZoom((z) => Math.min(2, Math.round((z + 0.25) * 100) / 100));
+    }
+
+    function zoomOut() {
+        setFitWidth(false);
+        setZoom((z) => Math.max(0.5, Math.round((z - 0.25) * 100) / 100));
+    }
+
+    function resetZoom() {
+        setZoom(1);
+        setFitWidth(true);
+    }
+
     return (
         <div className="container-fluid py-4 px-3 px-md-4">
-            <div className="d-flex justify-content-between align-items-center mb-3">
-                <h2 className="mb-0">Admin E‑Paper</h2>
-                <button className="btn btn-outline-secondary" type="button" onClick={loadPages}>
-                    Refresh
-                </button>
+            <div className="viewer-toolbar card shadow-sm border-0 mb-3">
+                <div className="card-body d-flex flex-wrap gap-2 align-items-center justify-content-between">
+                    <div className="d-flex align-items-center gap-3">
+                        <h4 className="mb-0">Admin E‑Paper</h4>
+                        <span className="text-muted small">Pages: {pages.length || 0}</span>
+                    </div>
+                    <div className="d-flex align-items-center gap-2">
+                        <button className="btn btn-outline-secondary btn-sm" type="button" onClick={loadPages}>
+                            <i className="bi bi-arrow-clockwise"></i>
+                        </button>
+                        <div className="vr mx-2" />
+                        <button className="btn btn-outline-secondary btn-sm" onClick={zoomOut} title="Zoom out">
+                            <i className="bi bi-zoom-out"></i>
+                        </button>
+                        <span className="small text-muted" style={{ minWidth: 40, textAlign: 'center' }}>{Math.round(zoom * 100)}%</span>
+                        <button className="btn btn-outline-secondary btn-sm" onClick={zoomIn} title="Zoom in">
+                            <i className="bi bi-zoom-in"></i>
+                        </button>
+                        <button className="btn btn-outline-secondary btn-sm" onClick={resetZoom} title="Fit to width">
+                            <i className="bi bi-aspect-ratio"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div className="uploader mb-4">
@@ -96,73 +131,51 @@ export default function AdminEpaper() {
             </div>
 
             <div className="row g-4">
-                <div className="col-lg-8">
+                <div className="col-lg-9">
                     <div className="page-frame">
-                        <div className="d-flex justify-content-between align-items-center mb-2">
-                            <div>
-                                <strong>Pages:</strong> {pages.length || 0}
-                            </div>
-                            <div>
-                                <strong>Page:</strong> {pages.length ? currentIndex + 1 : 0}/{pages.length}
-                            </div>
-                            <div className="d-flex gap-2">
-                                <button className="btn btn-outline-primary btn-sm" onClick={prev} disabled={currentIndex === 0}>
-                                    Prev
-                                </button>
-                                <button className="btn btn-outline-primary btn-sm" onClick={next} disabled={currentIndex >= pages.length - 1}>
-                                    Next
-                                </button>
-                                {pages[currentIndex] && (
-                                    <>
-                                        <button
-                                            className="btn btn-outline-success btn-sm"
-                                            onClick={() => openModal(`${API_BASE}${pages[currentIndex].url}`)}
-                                        >
-                                            Full View
-                                        </button>
-                                        <button
-                                            className="btn btn-outline-danger btn-sm"
-                                            onClick={() => handleDelete(pages[currentIndex].filename)}
-                                        >
-                                            Delete
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="text-center">
+                        <div className="viewer-scroll bg-dark d-flex justify-content-center align-items-start p-2 rounded">
                             {pages.length ? (
                                 <img
-                                    className="img-fluid main-image"
+                                    className="viewer-image"
                                     src={`${API_BASE}${pages[currentIndex].url}`}
                                     alt={`Page ${currentIndex + 1}`}
-                                    onClick={() => openModal(`${API_BASE}${pages[currentIndex].url}`)}
-                                    style={{ cursor: 'zoom-in' }}
+                                    onDoubleClick={() => openModal(`${API_BASE}${pages[currentIndex].url}`)}
+                                    style={fitWidth ? { maxHeight: '78vh', width: 'auto', height: 'auto' } : { width: `${Math.round(zoom * 100)}%`, height: 'auto' }}
                                 />
                             ) : (
                                 <div className="text-muted py-5">No pages yet. Upload to get started.</div>
                             )}
                         </div>
+                        {pages[currentIndex] && (
+                            <div className="text-end mt-2">
+                                <button className="btn btn-outline-success btn-sm" onClick={() => openModal(`${API_BASE}${pages[currentIndex].url}`)}>
+                                    <i className="bi bi-arrows-fullscreen me-1"></i> Full View
+                                </button>
+                                <button className="btn btn-outline-danger btn-sm ms-2" onClick={() => handleDelete(pages[currentIndex].filename)}>
+                                    <i className="bi bi-trash me-1"></i> Delete
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
 
-                <div className="col-lg-4">
-                    <div className="page-frame">
+                <div className="col-lg-3">
+                    <div className="page-frame sticky-panel">
                         <div className="d-flex justify-content-between align-items-center mb-2">
                             <strong>Thumbnails</strong>
                             <span className="text-muted small">Click to open</span>
                         </div>
-                        <div className="row g-2">
+                        <div className="row g-2 thumbs-panel">
                             {pages.map((p, idx) => (
                                 <div className="col-6 col-md-12" key={p.filename}>
-                                    <img
-                                        src={`${API_BASE}${p.url}`}
-                                        alt={`Page ${idx + 1}`}
-                                        className={`img-fluid rounded thumb ${idx === currentIndex ? 'active' : ''}`}
-                                        onClick={() => setCurrentIndex(idx)}
-                                    />
-                                    <div className="small text-center mt-1">Pg {idx + 1}</div>
+                                    <div className={`thumb-card ${idx === currentIndex ? 'active' : ''}`} onClick={() => setCurrentIndex(idx)}>
+                                        <img
+                                            src={`${API_BASE}${p.url}`}
+                                            alt={`Page ${idx + 1}`}
+                                            className="img-fluid rounded"
+                                        />
+                                        <div className="thumb-label">Pg {idx + 1}</div>
+                                    </div>
                                 </div>
                             ))}
                             {!pages.length && <div className="text-muted">No thumbnails</div>}
