@@ -5,12 +5,14 @@ import { Toaster } from 'react-hot-toast';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import Dashboard from './pages/Dashboard';
+import SiteHeader from './components/SiteHeader';
 
 function App() {
     const token = localStorage.getItem('token');
 
     return (
         <BrowserRouter>
+            <SiteHeader />
             <Toaster position="top-right" />
             <Routes>
                 <Route path="/" element={<Navigate to="/login" />} />
