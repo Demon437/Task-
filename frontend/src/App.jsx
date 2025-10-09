@@ -6,6 +6,7 @@ import './index.css';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import Dashboard from './pages/Dashboard';
+import LandingPage from './pages/LandingPage';
 
 function App() {
     const token = localStorage.getItem('token');
@@ -14,14 +15,12 @@ function App() {
         <BrowserRouter>
             <Toaster position="top-right" />
             <Routes>
-                <Route path="/" element={<Navigate to="/login" />} />
+                <Route path="/" element={<LandingPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route
                     path="/dashboard"
-                    element={
-                        token ? <Dashboard /> : <Navigate to="/login" />
-                    }
+                    element={token ? <Dashboard /> : <Navigate to="/login" />}
                 />
             </Routes>
         </BrowserRouter>
